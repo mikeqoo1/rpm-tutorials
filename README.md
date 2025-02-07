@@ -36,7 +36,7 @@ make
 1. 先把執行檔丟到SOURCES裡
 
 ```bash
-cp hello-world ~/rpmbuild/SOURCES/
+cp hello ~/rpmbuild/SOURCES/
 ```
 
 2. 寫 spec 的文件
@@ -81,13 +81,13 @@ rpmbuild -ba ~/rpmbuild/SPECS/hello.spec
 如果沒錯會產生
 
 ```bash
-~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm
+~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.el9.x86_64.rpm
 ```
 
 4. 安裝 RPM
 
 ```bash
-sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm
+sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.el9.x86_64.rpm
 ```
 
 5. 設定 DNF Repository 自己建倉庫
@@ -98,7 +98,7 @@ sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm
 
 ```bash
 sudo mkdir -p /var/www/html/repo
-sudo cp ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm /var/www/html/repo/
+sudo cp ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.el9.x86_64.rpm /var/www/html/repo/
 ```
 
 建立倉庫索引
@@ -110,10 +110,11 @@ sudo createrepo /var/www/html/repo
 設定 dnf 存取
 
 ```bash
-在/etc/yum.repos.d/myrepo.repo
+在 sudo vim /etc/yum.repos.d/myrepo.repo
 [myrepo]
 name=My Custom Repo
-baseurl=<http://your-server-ip/repo>
+# baseurl=<http://your-server-ip/repo>  要架設http
+baseurl=file:///var/www/html/repo # 簡易本地端
 enabled=1
 gpgcheck=0
 ```
