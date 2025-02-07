@@ -42,35 +42,78 @@ cp hello-world ~/rpmbuild/SOURCES/
 2. 寫 spec 的文件
 
 ```bash
-vim ~/rpmbuild/SPECS/hello.spec
-
-Name:           myapp
+Name:           hello
 Version:        1.0.0
 Release:        1%{?dist}
-Summary:        我的應用程式
+Summary:        A simple Hello World program
 
 License:        GPL
-URL:            https://example.com/myapp
-Source0:        myapp-1.0.0.tar.gz
+URL:            https://example.com/hello
+Source0:        hello
 
 BuildArch:      x86_64
 
 %description
-這是一個可以用 dnf 安裝的測試應用程式。
+This is a simple Hello World program packaged as an RPM.
 
 %prep
-%setup -q
 
 %build
 
 %install
 mkdir -p %{buildroot}/usr/bin
-cp myapp %{buildroot}/usr/bin/myapp
+cp %{SOURCE0} %{buildroot}/usr/bin/hello
 
 %files
-/usr/bin/myapp
+/usr/bin/hello
 
 %changelog
-* 測試
-- 初始版本
+* Tue Feb 6 2025 mike - 1.0.0-1
+- Initial package
+```
+
+3. 建立 RPM 套件
+
+```bash
+rpmbuild -ba ~/rpmbuild/SPECS/hello.spec
+```
+
+如果沒錯會產生
+
+```bash
+~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm
+```
+
+4. 安裝 RPM
+
+```bash
+sudo dnf install ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm
+```
+
+5. 設定 DNF Repository 自己建倉庫
+
+本地建立倉庫
+
+建立倉庫目錄
+
+```bash
+sudo mkdir -p /var/www/html/repo
+sudo cp ~/rpmbuild/RPMS/x86_64/hello-1.0.0-1.x86_64.rpm /var/www/html/repo/
+```
+
+建立倉庫索引
+
+```bash
+sudo createrepo /var/www/html/repo
+```
+
+設定 dnf 存取
+
+```bash
+在/etc/yum.repos.d/myrepo.repo
+[myrepo]
+name=My Custom Repo
+baseurl=<http://your-server-ip/repo>
+enabled=1
+gpgcheck=0
 ```
